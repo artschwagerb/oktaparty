@@ -21,6 +21,7 @@ class OktaGroup(models.Model):
     
     allow_join = models.BooleanField(default=False)
     allow_leave = models.BooleanField(default=False)
+    hidden = models.BooleanField(default=False)
 
     active = models.BooleanField(default=True)
 

@@ -24,7 +24,10 @@ def okta_group_sync():
                 'description': g['profile'].get('description',None),
                 'profile': g['profile'],
                 'source_type': g['type'],
-                'source_system': g['objectClass'][0]
+                'source_system': g['objectClass'][0],
+                'allow_join': g['profile'].get('allowJoin', False),
+                'allow_leave': g['profile'].get('allowLeave', False),
+                'hidden': g['profile'].get('hidden', False)
             }
         )
         
@@ -38,6 +41,9 @@ def okta_group_sync():
             group_item.profile = g['profile']
             group_item.source_type = g['type']
             group_item.source_system = g['objectClass'][0]
+            group_item.allow_join = g['profile'].get('allowJoin', False)
+            group_item.allow_leave = g['profile'].get('allowLeave', False)
+            group_item.hidden = g['profile'].get('hidden', False)
             
             group_item.save()
 
