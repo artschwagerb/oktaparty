@@ -1,0 +1,136 @@
+{% extends "core/base.html" %}
+
+{% block title %}Group List{% endblock %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block css %}
+<style type="text/css">
+	.card-number {
+		font-size: 30px;
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="content">
+
+	<div class="row" style="margin-bottom: 20px;">
+		<div class="col-sm-12">
+			<h2>Okta Groups</h2>
+		</div>
+	</div>
+
+	<div class="row" style="margin-bottom: 20px;">
+		<div class="col-sm-12 col-md-6">
+			<h4>Your Groups ({{ user_group_list|length }})</h4>
+			<div class="list-group">
+        	{% for g in user_group_list %}
+				<div class="list-group-item list-group-item-action flex-column align-items-start">
+					<div class="d-flex w-100 justify-content-between">
+						<h5 class="mb-1">{{ g.name }}</h5>
+						<p>
+							{% if g.source_type == 'OKTA_GROUP' %}
+								{% if g.okta_id in user_group_ids %}
+									{% if g.allow_leave %}
+										<a href="#" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
+									{% endif %}
+								{% else %}
+									{% if g.allow_join %}
+										<a href="#" class="btn btn-outline-success btn-sm"><i class="far fa-check-circle"></i> Join</a>
+									{% endif %}
+								{% endif %}
+							{% else %}
+								{% if g.okta_id in user_group_ids %}
+									{% if g.allow_leave %}
+										<a href="#" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
+									{% endif %}
+								{% else %}
+									{% if g.allow_join %}
+										<a href="#" class="btn btn-outline-success btn-sm"><i class="far fa-check-circle"></i> Join</a>
+									{% endif %}
+								{% endif %}
+							{% endif %}
+						</p>
+					</div>
+					<p class="mb-1">{% if g.description %}<em>{{ g.description }}</em>{% endif %}</p>
+					<p class="mb-1">
+						{% if g.profile %}
+							{% if g.profile.type %}
+								<span class="badge badge-secondary">{{ g.profile.type|title }}</span>
+							{% endif %}
+							{% if g.profile.application %}
+								<span class="badge badge-secondary">{{ g.profile.application|title }}</span>
+							{% endif %}
+							{% if g.profile.emailAddress %}
+								<span class="badge badge-primary">{{ g.profile.emailAddress }}</span>
+							{% endif %}
+						{% endif %}
+						{% if g.source_type %}
+							<span class="badge badge-secondary">{{ g.source_type }}</span>
+						{% endif %}
+						{% if g.source_system %}
+							<span class="badge badge-secondary">{{ g.source_system }}</span>
+						{% endif %}
+					</p>
+				</div>
+        	{% endfor %}
+			</div>
+		</div>
+		<div class="col-sm-12 col-md-6">
+			<h4>Available Groups ({{ group_list|length }})</h4>
+			<div class="list-group" id="available-groups">
+        	{% for g in group_list %}
+				<div class="list-group-item list-group-item-action flex-column align-items-start">
+					<div class="d-flex w-100 justify-content-between">
+						<h5 class="mb-1">{{ g.name }}</h5>
+						<p>
+							{% if g.source_type == 'OKTA_GROUP' %}
+								{% if g.okta_id in user_group_ids %}
+									<a href="#" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
+								{% else %}
+									<a href="#" class="btn btn-outline-success btn-sm"><i class="far fa-check-circle"></i> Join</a>
+								{% endif %}
+							{% else %}
+								{% if g.okta_id in user_group_ids %}
+									<a href="#" class="btn btn-outline-danger btn-sm" disabled><i class="far fa-times-circle"></i> Leave</a>
+								{% else %}
+									<a href="#" class="btn btn-outline-success btn-sm" disabled><i class="far fa-check-circle"></i> Join</a>
+								{% endif %}
+							{% endif %}
+						</p>
+					</div>
+					<p class="mb-1">{% if g.description %}<em>{{ g.description }}</em>{% endif %}</p>
+					<p class="mb-1">
+						{% if g.profile %}
+							{% if g.profile.type %}
+								<span class="badge badge-secondary">{{ g.profile.type|title }}</span>
+							{% endif %}
+							{% if g.profile.application %}
+								<span class="badge badge-secondary">Application: {{ g.profile.application|title }}</span>
+							{% endif %}
+							{% if g.profile.emailAddress %}
+								<span class="badge badge-primary">{{ g.profile.emailAddress }}</span>
+							{% endif %}
+						{% endif %}
+						{% if g.source_type %}
+							<span class="badge badge-secondary">{{ g.source_type }}</span>
+						{% endif %}
+						{% if g.source_system %}
+							<span class="badge badge-secondary">{{ g.source_system }}</span>
+						{% endif %}
+					</p>
+				</div>
+			{% empty %}
+				<p>No Groups Available.  You have everything you can join.</p>
+        	{% endfor %}
+			</div>
+		</div>
+	</div>
+
+</main>
+{% endblock %}
+
+{% block script-footer %}
+
+{% endblock %}

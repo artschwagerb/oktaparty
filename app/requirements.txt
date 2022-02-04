@@ -1,0 +1,10 @@
+Django==4.0.1
+mysqlclient
+requests==2.27.1
+celery==5.2.3
+redis==4.1.2
+django-celery-results
+django-debug-toolbar
+django-celery-beat
+gunicorn
+django-redis-cache

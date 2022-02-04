@@ -1,0 +1,70 @@
+version: '3.3'
+
+services:
+  db:
+    image: ghcr.io/linuxserver/mariadb
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - MYSQL_ROOT_PASSWORD=IamGroot123
+      - TZ=America/New_York
+      - MYSQL_DATABASE=oktaparty #optional
+      - MYSQL_USER=oktaparty #optional
+      - MYSQL_PASSWORD=SuperS3cure123 #optional
+    volumes:
+      - ./local/mariadb:/config
+    ports:
+      - '3306:3306'
+    restart: unless-stopped
+  web:
+    build: ./app
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app/:/usr/src/app/
+    ports:
+      - 8000:8000
+    environment:
+      - REDIS_URL=redis://redis
+    env_file:
+      - ./.env
+    restart: always
+    depends_on:
+      - redis
+      - db
+  celery-worker:
+    build: ./app
+    command: celery -A oktaparty.celery worker --loglevel=warning
+    volumes:
+      - ./app/:/usr/src/app/
+    environment:
+      - REDIS_URL=redis://redis
+      - DJANGO_MANAGEPY_MIGRATE=0
+      - DJANGO_MANAGEPY_COLLECTSTATIC=0
+    env_file:
+      - ./.env
+    restart: always
+    depends_on:
+      - redis
+      - db
+  celery-beat:
+    build: ./app
+    command: celery -A oktaparty.celery beat -l warning --pidfile= --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - ./app/:/usr/src/app/
+    environment:
+      - REDIS_URL=redis://redis
+      - DJANGO_MANAGEPY_MIGRATE=0
+      - DJANGO_MANAGEPY_COLLECTSTATIC=0
+    env_file:
+      - ./.env
+    restart: always
+    depends_on:
+      - redis
+      - db
+  redis:
+    command: bash -c "redis-server --appendonly yes"
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./local/redis:/data
