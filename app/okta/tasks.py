@@ -4,7 +4,7 @@ from celery import shared_task
 from datetime import date, datetime
 import time
 
-from .lib.okta import OktaTools
+from .okta import OktaTools
 from .models import OktaGroup
 
 @shared_task

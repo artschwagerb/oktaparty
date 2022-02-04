@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Q
 from django.contrib import messages
 
-from .lib.okta import OktaTools
+from .okta import OktaTools
 
 from .models import OktaGroup
 
