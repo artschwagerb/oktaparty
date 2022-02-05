@@ -18,6 +18,7 @@
 	<div class="row" style="margin-bottom: 20px;">
 		<div class="col-sm-12">
 			<h2>Okta Groups</h2>
+			<a class="btn btn-primary" href="{% url "okta:task-okta-group-sync" %}">Sync Groups</a>
 		</div>
 	</div>
 
@@ -33,28 +34,31 @@
 							{% if g.source_type == 'OKTA_GROUP' %}
 								{% if g.okta_id in user_group_ids %}
 									{% if g.allow_leave %}
-										<a href="#" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
+										<a href="{% url 'okta:group-leave' group_id=g.id %}" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
 									{% endif %}
 								{% else %}
 									{% if g.allow_join %}
-										<a href="#" class="btn btn-outline-success btn-sm"><i class="far fa-check-circle"></i> Join</a>
+										<a href="{% url 'okta:group-join' group_id=g.id %}" class="btn btn-outline-success btn-sm"><i class="far fa-check-circle"></i> Join</a>
 									{% endif %}
 								{% endif %}
-							{% else %}
+							{% comment %} {% else %}
 								{% if g.okta_id in user_group_ids %}
 									{% if g.allow_leave %}
-										<a href="#" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
+										<a href="{% url 'okta:group-leave' group_id=g.id %}" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
 									{% endif %}
 								{% else %}
 									{% if g.allow_join %}
-										<a href="#" class="btn btn-outline-success btn-sm"><i class="far fa-check-circle"></i> Join</a>
+										<a href="{% url 'okta:group-join' group_id=g.id %}" class="btn btn-outline-success btn-sm"><i class="far fa-check-circle"></i> Join</a>
 									{% endif %}
-								{% endif %}
+								{% endif %} {% endcomment %}
 							{% endif %}
 						</p>
 					</div>
 					<p class="mb-1">{% if g.description %}<em>{{ g.description }}</em>{% endif %}</p>
 					<p class="mb-1">
+						{% if g.source_system_pretty %}
+							<span class="badge badge-secondary">{{ g.source_system_pretty }}</span>
+						{% endif %}
 						{% if g.profile %}
 							{% if g.profile.type %}
 								<span class="badge badge-secondary">{{ g.profile.type|title }}</span>
@@ -63,14 +67,8 @@
 								<span class="badge badge-secondary">{{ g.profile.application|title }}</span>
 							{% endif %}
 							{% if g.profile.emailAddress %}
-								<span class="badge badge-primary">{{ g.profile.emailAddress }}</span>
+								<span class="badge badge-secondary">{{ g.profile.emailAddress }}</span>
 							{% endif %}
-						{% endif %}
-						{% if g.source_type %}
-							<span class="badge badge-secondary">{{ g.source_type }}</span>
-						{% endif %}
-						{% if g.source_system %}
-							<span class="badge badge-secondary">{{ g.source_system }}</span>
 						{% endif %}
 					</p>
 				</div>
@@ -87,21 +85,18 @@
 						<p>
 							{% if g.source_type == 'OKTA_GROUP' %}
 								{% if g.okta_id in user_group_ids %}
-									<a href="#" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
+									<a href="{% url 'okta:group-leave' group_id=g.id %}" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
 								{% else %}
-									<a href="#" class="btn btn-outline-success btn-sm"><i class="far fa-check-circle"></i> Join</a>
-								{% endif %}
-							{% else %}
-								{% if g.okta_id in user_group_ids %}
-									<a href="#" class="btn btn-outline-danger btn-sm" disabled><i class="far fa-times-circle"></i> Leave</a>
-								{% else %}
-									<a href="#" class="btn btn-outline-success btn-sm" disabled><i class="far fa-check-circle"></i> Join</a>
+									<a href="{% url 'okta:group-join' group_id=g.id %}" class="btn btn-outline-success btn-sm"><i class="far fa-check-circle"></i> Join</a>
 								{% endif %}
 							{% endif %}
 						</p>
 					</div>
 					<p class="mb-1">{% if g.description %}<em>{{ g.description }}</em>{% endif %}</p>
 					<p class="mb-1">
+						{% if g.source_system_pretty %}
+							<span class="badge badge-secondary">{{ g.source_system_pretty }}</span>
+						{% endif %}
 						{% if g.profile %}
 							{% if g.profile.type %}
 								<span class="badge badge-secondary">{{ g.profile.type|title }}</span>
@@ -110,15 +105,10 @@
 								<span class="badge badge-secondary">Application: {{ g.profile.application|title }}</span>
 							{% endif %}
 							{% if g.profile.emailAddress %}
-								<span class="badge badge-primary">{{ g.profile.emailAddress }}</span>
+								<span class="badge badge-secondary">{{ g.profile.emailAddress }}</span>
 							{% endif %}
 						{% endif %}
-						{% if g.source_type %}
-							<span class="badge badge-secondary">{{ g.source_type }}</span>
-						{% endif %}
-						{% if g.source_system %}
-							<span class="badge badge-secondary">{{ g.source_system }}</span>
-						{% endif %}
+						
 					</p>
 				</div>
 			{% empty %}

@@ -45,42 +45,114 @@ def group_list(request):
     return render(request, 'groups/group_list.html', context=context)
 
 @login_required
-def group_sync(request):
-    """Sync Groups."""
+def group_join(request,group_id):
+    """Join Group"""
+    if request.method == "GET":
+        try:
+            okta_group = OktaGroup.objects.get(pk=group_id)
 
-    okta = OktaTools()
+        except OktaGroup.DoesNotExist:
+            raise Http404("OktaGroup does not exist")
+        
+        context = {
+            'okta_group': okta_group,
+        }
 
-    okta_groups = okta.groups()
-
-    for g in okta_groups:
-        group_item, group_created = OktaGroup.objects.get_or_create(okta_id=g['id'],
-            defaults={
-                'name': g['profile']['name'],
-                'description': g['profile'].get('description',None),
-                'profile': g['profile'],
-                'source_type': g['type'],
-                'source_system': g['objectClass'][0]
-            }
-        )
-        if group_created:
-            print("Group Created: %s" % (group_item))
-        else:
-            group_item.name = g['profile']['name']
-            group_item.description = g['profile'].get('description', None)
-            group_item.profile = g['profile']
-            group_item.source_type = g['type']
-            group_item.source_system = g['objectClass'][0]
-            
-            group_item.save()
-
-            print("Group Updated: %s" % (group_item))
+        return render(request, 'groups/group_join.html', context)
     
-    context = {
-        "group_list": group_list,
-    }
+    elif request.method == "POST":
+        try:
+            okta_group = OktaGroup.objects.get(pk=group_id)
+            
+            if not okta_group.allow_join:
+                raise Http404("Not Allowed to Join.")
+            if not request.user.okta_id:
+                raise Http404("User missing okta_id.")
 
-    # Render the HTML template index.html with the data in the context variable
-    return render(request, 'groups/group_list.html', context=context)
+            okta_group.join(request.user)
+        
+        except OktaGroup.DoesNotExist:
+            raise Http404("OktaGroup does not exist")
+            
+        next_url = request.GET.get("next",None)
+        if next_url:
+            return redirect(next_url)
+        else:
+            return redirect('okta:group-list')
+
+@login_required
+def group_leave(request,group_id):
+    """Leave Group"""
+    if request.method == "GET":
+        try:
+            okta_group = OktaGroup.objects.get(pk=group_id)
+
+        except OktaGroup.DoesNotExist:
+            raise Http404("OktaGroup does not exist")
+        
+        context = {
+            'okta_group': okta_group,
+        }
+
+        return render(request, 'groups/group_leave.html', context)
+
+    elif request.method == "POST":
+        try:
+            okta_group = OktaGroup.objects.get(pk=group_id)
+
+            if not okta_group.allow_leave:
+                raise Http404("Not Allowed to Leave.")
+            if not request.user.okta_id:
+                raise Http404("User missing okta_id.")
+
+            okta_group.leave(request.user)
+        
+        except OktaGroup.DoesNotExist:
+            raise Http404("OktaGroup does not exist")
+
+        next_url = request.GET.get("next",None)
+        if next_url:
+            return redirect(next_url)
+        else:
+            return redirect('okta:group-list')
+
+# @login_required
+# def group_sync(request):
+#     """Sync Groups."""
+
+#     okta = OktaTools()
+
+#     okta_groups = okta.groups()
+
+#     for g in okta_groups:
+#         group_item, group_created = OktaGroup.objects.get_or_create(okta_id=g['id'],
+#             defaults={
+#                 'name': g['profile']['name'],
+#                 'description': g['profile'].get('description',None),
+#                 'profile': g['profile'],
+#                 'source_type': g['type'],
+#                 'source_system': g['objectClass'][0]
+#             }
+#         )
+#         if group_created:
+#             print("Group Created: %s" % (group_item))
+#         else:
+#             group_item.name = g['profile']['name']
+#             group_item.description = g['profile'].get('description', None)
+#             group_item.profile = g['profile']
+#             group_item.source_type = g['type']
+#             group_item.source_system = g['objectClass'][0]
+            
+#             group_item.save()
+
+#             print("Group Updated: %s" % (group_item))
+    
+#     context = {
+#         "group_list": group_list,
+#     }
+
+#     # Render the HTML template index.html with the data in the context variable
+#     return render(request, 'groups/group_list.html', context=context)
 
 @login_required
 @permission_required('okta.task_sync_okta_groups')
@@ -94,4 +166,4 @@ def TaskSyncOktaGroups(request):
     if next_url:
         return redirect(next_url)
     else:
-        return redirect('okta:index')
+        return redirect('okta:group-list')

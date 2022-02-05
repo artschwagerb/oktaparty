@@ -1,0 +1,42 @@
+{% extends "core/base.html" %}
+
+{% block title %}Group Join{% endblock %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block css %}
+<style type="text/css">
+
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="content">
+
+	<div class="row">
+		<div class="col-sm-12 col-md-6">
+			<h2>{{ okta_group.name }}</h2>
+            <ul class="list-unstyled">
+            <li><small>Description:</small> {{ okta_group.description }}</li>
+            {% if okta_group.profile.emailAddress %}
+                <li><small>Email:</small> {{ okta_group.profile.emailAddress }}</li>
+            {% endif %}
+            </ul>
+
+            <p>Are you sure you want to Join?</p>
+            <form method="POST">{% csrf_token %}
+		        <button type="submit" class="save btn btn-primary">Yes, Join</button>
+		    </form>
+		</div>
+        <div class="col-sm-12 col-md-6">
+            <p>Members: {{ okta_group.member_count }}</p>
+            <p>{{ okta_group.members }}</p>
+        </div>
+	</div>
+
+</main>
+{% endblock %}
+
+{% block script-footer %}
+
+{% endblock %}

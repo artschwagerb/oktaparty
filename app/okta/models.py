@@ -1,4 +1,7 @@
 from django.db import models
+from users.models import User
+
+from .okta import OktaTools
 
 # Create your models here.
 class OktaGroup(models.Model):
@@ -37,3 +40,31 @@ class OktaGroup(models.Model):
     def __str__(self):
         """String for representing the MyModelName object (in Admin site etc.)."""
         return "%s (Okta ID: %s)" % (self.name, self.okta_id)
+    
+    def source_system_pretty(self):
+        if self.source_system == 'okta:windows_security_principal':
+            return "Active Directory"
+        else:
+            return "Okta"
+    
+    def join(self, user_item):
+        okta = OktaTools()
+        okta.group_users_add(self.okta_id, user_item.okta_id)
+    
+    def leave(self, user_item):
+        okta = OktaTools()
+        okta.group_users_remove(self.okta_id, user_item.okta_id)
+    
+    def members(self):
+        okta = OktaTools()
+
+        # Group Members
+        okta_users = okta.group_users(self.okta_id)
+        okta_user_ids = [user['id'] for user in okta_users]
+
+        self.member_count = len(okta_users)
+        self.save()
+
+        user_list = User.objects.filter(okta_id__in=okta_user_ids)
+
+        return user_list
