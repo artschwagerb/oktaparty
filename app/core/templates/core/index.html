@@ -1,0 +1,35 @@
+{% extends "core/base.html" %}
+
+{% block title %}Group Join{% endblock %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block css %}
+<style type="text/css">
+
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="content">
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron">
+                <h1 class="display-4">OktaParty!</h1>
+                <p class="lead">Manage Your Okta Groups.</p>
+                <hr class="my-4">
+                <p>Find available groups to join.  Leave some groups behind.</p>
+                <p class="lead">
+                  <a class="btn btn-primary btn-lg" href="{% url 'okta:group-list' %}" role="button">Manage Groups</a>
+                </p>
+              </div>
+        </div>
+	</div>
+
+</main>
+{% endblock %}
+
+{% block script-footer %}
+
+{% endblock %}

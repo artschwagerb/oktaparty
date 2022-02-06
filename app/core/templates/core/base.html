@@ -65,7 +65,7 @@
 <body>
 {% comment %} {% hijack_notification %} {% endcomment %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">OktaParty</a>
+      <a class="navbar-brand" href="{% url "core:index" %}">OktaParty</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -86,10 +86,16 @@
         <div class="my-2 my-lg-0 ">
           <!-- Username and preferences -->
         </div>
-        <div class="my-2 my-lg-0">
-          <span class="pr-1">{{ request.user }}</span>
-          <a class="btn btn-outline-danger my-2 my-sm-0" href="#">Logout</a>
-        </div>
+        {% if request.user.is_authenticated %}
+          <div class="my-2 my-lg-0">
+            <span class="pr-1">{{ request.user }}</span>
+            <a class="btn btn-outline-danger my-2 my-sm-0" href="#">Logout</a>
+          </div>
+        {% else %}
+          <div class="my-2 my-lg-0">
+            <a class="btn btn-outline-primary my-2 my-sm-0" href="{% url "login" %}">Login</a>
+          </div>
+        {% endif %}
       </div>
     </nav>
 

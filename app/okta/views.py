@@ -3,6 +3,9 @@ from django.http import Http404, HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Q
 from django.contrib import messages
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers
 
 from .okta import OktaTools
 
@@ -20,6 +23,8 @@ def index(request):
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'groups/index.html', context=context)
 
+# @vary_on_headers('Cookie')
+# @cache_page(60 * 15)
 @login_required
 def group_list(request):
     """List Groups."""

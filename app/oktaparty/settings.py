@@ -82,6 +82,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'oktaparty.wsgi.application'
 
 AUTH_USER_MODEL = 'users.User'
+LOGIN_REDIRECT_URL = '/'
 
 
 # Database
@@ -102,9 +103,6 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': os.environ.get("REDIS_URL", "redis://redis:6379"),
-        'OPTIONS': {
-            'DB': os.environ.get("REDIS_CACHE_DB", 1)
-        }
     }
 }
 
