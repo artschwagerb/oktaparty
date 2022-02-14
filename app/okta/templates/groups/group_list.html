@@ -26,11 +26,20 @@
 		padding-top: 10px;
 	 }
 	 
-	 .okta-groups > li:first-child {
+	.okta-groups > li:first-child {
 		{% comment %} margin-top: 0; {% endcomment %}
 		border-top: none;
 		{% comment %} padding-top: 0; {% endcomment %}
-	 }
+	}
+
+	.search-options {
+		margin-top: 10px;
+	}
+
+	.okta-groups > li > .pills:child {
+		margin-right: 20px;
+		display: inline-block
+	}
 </style>
 {% endblock %}
 
@@ -45,158 +54,39 @@
 	</div>
 
 	<div class="row">
-		<div class="col-sm-12 col-md-6">
-			<h3>Available Groups ({{ group_list|length }})</h3>
-			<div id="available-groups">
+		<div class="col-sm-12 col-md-12">
+			<h3>Groups ({{ group_list|length }})</h3>
+			<div id="groups-list">
 				<!-- class="search" automagically makes an input a search field. -->
 				<input class="search" placeholder="Search" />
 				<!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
-				<button class="sort" data-sort="name">Sort by Name</button>
-				<button class="sort" data-sort="email">Sort by Email</button>
+				<div class="search-options">
+					<div>Sort by:</div>
+					<button class="sort" data-sort="name">Name</button>
+					<button class="sort" data-sort="email">Email</button>
+				</div>
+
+				<div class="search-options">
+					<div>Filter by:</div>
+					<button class="tag filter" data-filter="app">App</button>
+					<button class="tag filter" data-filter="distribution">Distribution</button>
+					<button class="tag filter" data-filter="role">Role</button>
+					<button class="tag filter" data-filter="security">Security</button>
+				</div>
 
 				<ul class="list list-unstyled okta-groups">
 					{% for g in group_list %}
 					<li>
-						<h4 class="name">{{ g.name }}</h4>
-						<p class="description">{{ g.description }}</p>
-						<p class="email">{% if g.profile.emailAddress %}{{ g.profile.emailAddress }}{% endif %}</p>
-						<p>
-							{% if g.source_type == 'OKTA_GROUP' %}
-								{% if g.allow_join %}
-									<a href="{% url 'okta:group-join' group_id=g.id %}" class="btn btn-outline-success btn-sm"><i class="far fa-check-circle"></i> Join</a>
-								{% endif %}
-							{% endif %}
+						<h4 class="name ">{{ g.name }}</h4>
+						<p class="description">{% if g.description %}{{ g.description }}{% else %}(no description){% endif %}</p>
+						<p class="pills">
+						{% if g.profile.type %}<div><small>Type:</small> <span class="type font-weight-bold">{{ g.profile.type }}</span></div>{% endif %}
+						{% if g.profile.application %}<div><small>App:</small> <span class="application font-weight-bold">{{ g.profile.application }}</span></div>{% endif %}
+						{% if g.profile.emailAddress %}<div><small>Email:</small> <span class="email font-weight-bold">{{ g.profile.emailAddress }}</span></div>{% endif %}
 						</p>
 					</li>
 					{% endfor %}
 				</ul>
-			</div>
-		</div>
-		<div class="col-sm-12 col-md-6">
-			<h3>Your Groups ({{ user_group_list|length }})</h3>
-			<div id="your-groups">
-				<!-- class="search" automagically makes an input a search field. -->
-				<input class="search" placeholder="Search" />
-				<!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
-				<button class="sort" data-sort="name">Sort by Name</button>
-				<button class="sort" data-sort="email">Sort by Email</button>
-
-				<ul class="list list-unstyled okta-groups">
-					{% for g in user_group_list %}
-					<li>
-						<h4 class="name">{{ g.name }}</h4>
-						<p class="description">{{ g.description }}</p>
-						<p class="email">{% if g.profile.emailAddress %}{{ g.profile.emailAddress }}{% endif %}</p>
-						<p>
-							{% if g.source_type == 'OKTA_GROUP' %}
-								{% if g.allow_leave %}
-									<a href="{% url 'okta:group-join' group_id=g.id %}" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
-								{% else %}
-									<p><small>Required</small></p>
-								{% endif %}
-							{% else %}
-								<p><small>External Group</small></p>
-							{% endif %}
-						</p>
-					</li>
-					{% endfor %}
-				</ul>
-			</div>
-		</div>
-	</div>
-
-	<div class="row" style="margin-bottom: 20px; display: none;">
-		<div class="col-sm-12 col-md-6">
-			<h4>Your Groups ({{ user_group_list|length }})</h4>
-			<div class="list-group">
-        	{% for g in user_group_list %}
-				<div class="list-group-item list-group-item-action flex-column align-items-start">
-					<div class="d-flex w-100 justify-content-between">
-						<h5 class="mb-1">{{ g.name }}</h5>
-						<p>
-							{% if g.source_type == 'OKTA_GROUP' %}
-								{% if g.okta_id in user_group_ids %}
-									{% if g.allow_leave %}
-										<a href="{% url 'okta:group-leave' group_id=g.id %}" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
-									{% endif %}
-								{% else %}
-									{% if g.allow_join %}
-										<a href="{% url 'okta:group-join' group_id=g.id %}" class="btn btn-outline-success btn-sm"><i class="far fa-check-circle"></i> Join</a>
-									{% endif %}
-								{% endif %}
-							{% comment %} {% else %}
-								{% if g.okta_id in user_group_ids %}
-									{% if g.allow_leave %}
-										<a href="{% url 'okta:group-leave' group_id=g.id %}" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
-									{% endif %}
-								{% else %}
-									{% if g.allow_join %}
-										<a href="{% url 'okta:group-join' group_id=g.id %}" class="btn btn-outline-success btn-sm"><i class="far fa-check-circle"></i> Join</a>
-									{% endif %}
-								{% endif %} {% endcomment %}
-							{% endif %}
-						</p>
-					</div>
-					<p class="mb-1">{% if g.description %}<em>{{ g.description }}</em>{% endif %}</p>
-					<p class="mb-1">
-						{% if g.source_system_pretty %}
-							<span class="badge badge-secondary">{{ g.source_system_pretty }}</span>
-						{% endif %}
-						{% if g.profile %}
-							{% if g.profile.type %}
-								<span class="badge badge-secondary">{{ g.profile.type|title }}</span>
-							{% endif %}
-							{% if g.profile.application %}
-								<span class="badge badge-secondary">{{ g.profile.application|title }}</span>
-							{% endif %}
-							{% if g.profile.emailAddress %}
-								<span class="badge badge-secondary">{{ g.profile.emailAddress }}</span>
-							{% endif %}
-						{% endif %}
-					</p>
-				</div>
-        	{% endfor %}
-			</div>
-		</div>
-		<div class="col-sm-12 col-md-6">
-			<h4>Available Groups ({{ group_list|length }})</h4>
-			<div class="list-group" id="available-groups">
-        	{% for g in group_list %}
-				<div class="list-group-item list-group-item-action flex-column align-items-start">
-					<div class="d-flex w-100 justify-content-between">
-						<h5 class="mb-1">{{ g.name }}</h5>
-						<p>
-							{% if g.source_type == 'OKTA_GROUP' %}
-								{% if g.okta_id in user_group_ids %}
-									<a href="{% url 'okta:group-leave' group_id=g.id %}" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
-								{% else %}
-									<a href="{% url 'okta:group-join' group_id=g.id %}" class="btn btn-outline-success btn-sm"><i class="far fa-check-circle"></i> Join</a>
-								{% endif %}
-							{% endif %}
-						</p>
-					</div>
-					<p class="mb-1">{% if g.description %}<em>{{ g.description }}</em>{% endif %}</p>
-					<p class="mb-1">
-						{% if g.source_system_pretty %}
-							<span class="badge badge-secondary">{{ g.source_system_pretty }}</span>
-						{% endif %}
-						{% if g.profile %}
-							{% if g.profile.type %}
-								<span class="badge badge-secondary">{{ g.profile.type|title }}</span>
-							{% endif %}
-							{% if g.profile.application %}
-								<span class="badge badge-secondary">Application: {{ g.profile.application|title }}</span>
-							{% endif %}
-							{% if g.profile.emailAddress %}
-								<span class="badge badge-secondary">{{ g.profile.emailAddress }}</span>
-							{% endif %}
-						{% endif %}
-						
-					</p>
-				</div>
-			{% empty %}
-				<p>No Groups Available.  You have everything you can join.</p>
-        	{% endfor %}
 			</div>
 		</div>
 	</div>
@@ -207,10 +97,23 @@
 {% block script-footer %}
 <script>
 	var options = {
-		valueNames: [ 'name', 'description', 'email' ]
+		valueNames: [ 'name', 'description', 'email', 'type', 'application' ]
 	};
 	  
-	var availableGroupsList = new List('available-groups', options);
-	var availableGroupsList = new List('your-groups', options);
+	var groupsList = new List('groups-list', options);
+
+	$('.filter').on('click',function(){
+		var $q = $(this).attr('data-filter');
+		if($(this).hasClass('active')){
+			groupsList.filter();
+		  $('.filter').removeClass('active');
+		} else {
+			groupsList.filter(function(item) {
+			return (item.values().type == $q);
+		  });
+		  $('.filter').removeClass('active');
+		  $(this).addClass('active');
+		}
+	  });
 </script>
 {% endblock %}
