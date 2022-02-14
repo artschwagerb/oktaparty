@@ -29,8 +29,12 @@
 		    </form>
 		</div>
         <div class="col-sm-12 col-md-6">
-            <p>Members: {{ okta_group.member_count }}</p>
-            <p>{{ okta_group.members }}</p>
+            <p>Members: {{ okta_group.members|length }}</p>
+            <ul class="list-unstyled">
+            {% for u in okta_group.members %}
+                <li>{{ u }}</li>
+            {% endfor %}
+            </ul>
         </div>
 	</div>
 

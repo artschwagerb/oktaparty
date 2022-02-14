@@ -26,7 +26,7 @@ def index(request):
 # @vary_on_headers('Cookie')
 # @cache_page(60 * 15)
 @login_required
-def group_list(request):
+def group_yours(request):
     """List Groups."""
 
     okta = OktaTools()
@@ -47,7 +47,7 @@ def group_list(request):
     }
 
     # Render the HTML template index.html with the data in the context variable
-    return render(request, 'groups/group_list.html', context=context)
+    return render(request, 'groups/group_yours.html', context=context)
 
 @login_required
 def group_join(request,group_id):
@@ -121,44 +121,6 @@ def group_leave(request,group_id):
         else:
             return redirect('okta:group-list')
 
-# @login_required
-# def group_sync(request):
-#     """Sync Groups."""
-
-#     okta = OktaTools()
-
-#     okta_groups = okta.groups()
-
-#     for g in okta_groups:
-#         group_item, group_created = OktaGroup.objects.get_or_create(okta_id=g['id'],
-#             defaults={
-#                 'name': g['profile']['name'],
-#                 'description': g['profile'].get('description',None),
-#                 'profile': g['profile'],
-#                 'source_type': g['type'],
-#                 'source_system': g['objectClass'][0]
-#             }
-#         )
-#         if group_created:
-#             print("Group Created: %s" % (group_item))
-#         else:
-#             group_item.name = g['profile']['name']
-#             group_item.description = g['profile'].get('description', None)
-#             group_item.profile = g['profile']
-#             group_item.source_type = g['type']
-#             group_item.source_system = g['objectClass'][0]
-            
-#             group_item.save()
-
-#             print("Group Updated: %s" % (group_item))
-    
-#     context = {
-#         "group_list": group_list,
-#     }
-
-#     # Render the HTML template index.html with the data in the context variable
-#     return render(request, 'groups/group_list.html', context=context)
-
 @login_required
 @permission_required('okta.task_sync_okta_groups')
 def TaskSyncOktaGroups(request):
@@ -172,3 +134,18 @@ def TaskSyncOktaGroups(request):
         return redirect(next_url)
     else:
         return redirect('okta:group-list')
+
+@login_required
+def group_list(request):
+    """List Groups."""
+
+    okta = OktaTools()
+
+    group_list = OktaGroup.objects.filter(Q(hidden=False))
+    
+    context = {
+        "group_list": group_list,
+    }
+
+    # Render the HTML template index.html with the data in the context variable
+    return render(request, 'groups/group_list.html', context=context)
