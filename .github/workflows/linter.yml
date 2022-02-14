@@ -15,8 +15,9 @@ name: Lint Code Base
 # Start the job on all push #
 #############################
 on:
-  pull_request:
-    branches: [main]
+  #commenting off to prevent running during pull request
+  #pull_request:
+  #  branches: [main]
   workflow_dispatch:
 
 ###############
