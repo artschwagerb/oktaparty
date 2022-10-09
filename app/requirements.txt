@@ -13,3 +13,4 @@ django-crispy-forms
 crispy-bootstrap5
 django-hijack
 python-dateutil
+mozilla-django-oidc

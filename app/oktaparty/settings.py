@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+    'mozilla_django_oidc',
     'core',
     'okta',
     'users',
@@ -88,6 +89,7 @@ WSGI_APPLICATION = 'oktaparty.wsgi.application'
 
 AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 
 # Database
@@ -110,6 +112,24 @@ CACHES = {
         'LOCATION': os.environ.get("REDIS_URL", "redis://redis:6379"),
     }
 }
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    #'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
+    'oktaparty.oidc.MyAuthenticationBackend',
+)
+
+# OpenID Connect mozilla_django_oidc
+#OIDC_RP_IDP_SIGN_KEY = "<OP signing key in PEM or DER format>"
+#OIDC_OP_JWKS_ENDPOINT = "<URL of the OIDC OP jwks endpoint>"
+OIDC_RP_CLIENT_ID = os.environ.get("OIDC_RP_CLIENT_ID",None)
+OIDC_RP_CLIENT_SECRET = os.environ.get("OIDC_RP_CLIENT_SECRET",None)
+#OIDC_RP_SCOPES = "openid email given_name family_name picture"
+OIDC_RP_SIGN_ALGO = os.environ.get("OIDC_RP_SIGN_ALGO",None)
+OIDC_OP_AUTHORIZATION_ENDPOINT = os.environ.get("OIDC_OP_AUTHORIZATION_ENDPOINT",None)
+OIDC_OP_JWKS_ENDPOINT = os.environ.get("OIDC_OP_JWKS_ENDPOINT",None)
+OIDC_OP_TOKEN_ENDPOINT = os.environ.get("OIDC_OP_TOKEN_ENDPOINT",None)
+OIDC_OP_USER_ENDPOINT = os.environ.get("OIDC_OP_USER_ENDPOINT",None)
 
 
 # Password validation

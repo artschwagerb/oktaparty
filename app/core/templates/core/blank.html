@@ -1,0 +1,126 @@
+{% load static %}
+{% comment %} {% load hijack_tags %} {% endcomment %}
+<!doctype html>
+<html lang="en">
+<head><!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700|Open+Sans:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'hijack/hijack-styles.css' %}" />
+    <title>{% block title %}OktaParty{% endblock %}</title>
+
+    <style type="text/css">
+        /* Sticky footer styles
+        -------------------------------------------------- */
+        html {
+          position: relative;
+          min-height: 100%;
+        }
+        body {
+          margin-bottom: 60px; /* Margin bottom by footer height */
+          font-family: 'Open Sans', ;
+        }
+        {% comment %} .container-fullwidth {
+            margin: 40px;
+        } {% endcomment %}
+        .footer {
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+          height: 60px; /* Set the fixed height of the footer here */
+          line-height: 60px; /* Vertically center the text there */
+          background-color: #f5f5f5;
+        }
+        .monospace {
+          font-family: 'Lucida Console', Monaco, monospace
+        }
+
+        .comment-body {
+          font-size: 16px;
+          border-bottom: 1px solid #DCDCDC;
+          padding-top: 15px;
+        }
+
+        .comment-body > .comment-subtitle {
+          font-size: 14px;
+        }
+
+        .page_title {
+          font-size: 18px;
+          color: #808080;
+        }
+
+    </style>
+    {% block css %}
+
+    {% endblock %}
+    {% block script-head %}
+
+    {% endblock %}
+</head>
+<body>
+    <div class="container-fluid">
+        <div id="messages">
+            {% if messages %}
+              {% for message in messages %}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                  <div class="alert alert-success" role="alert">
+                    {{ message }}
+                  </div>
+                {% endif %}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                  <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                  </div>
+                {% endif %}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+                  <div class="alert alert-info" role="alert">
+                    {{ message }}
+                  </div>
+                {% endif %}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+                  <div class="alert alert-warning" role="alert">
+                    {{ message }}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+        </div>
+        <div id="content" style="margin-top: 10px; padding-bottom: 20px;">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+            {% block footer %}{% endblock %}
+      </div>
+    </footer>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <script src="https://kit.fontawesome.com/4bc68fa99d.js" crossorigin="anonymous"></script>
+
+    <!-- DataTables -->
+    <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+
+    <!-- ListJS -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+
+    <script type="text/javascript">
+      // Enable all Tooltips
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
+    </script>
+
+    {% block script-footer %}{% endblock %}
+</body>
+</html>
