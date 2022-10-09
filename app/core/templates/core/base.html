@@ -24,9 +24,9 @@
           margin-bottom: 60px; /* Margin bottom by footer height */
           font-family: 'Open Sans', ;
         }
-        .container-fullwidth {
+        {% comment %} .container-fullwidth {
             margin: 40px;
-        }
+        } {% endcomment %}
         .footer {
           position: absolute;
           bottom: 0;
@@ -78,9 +78,21 @@
               Groups
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="{% url 'okta:group-yours' %}">Manage Your Groups</a>
+              <a class="dropdown-item" href="{% url 'okta:group-yours' %}">Mine</a>
+              <a class="dropdown-item" href="{% url 'okta:group-owned' %}">Owned</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="{% url 'okta:group-list' %}">All Groups</a>
+              <a class="dropdown-item" href="{% url 'okta:group-list' %}">All</a>
+              <a class="dropdown-item" href="{% url 'okta:group-roles' %}">Roles</a>
+            </div>
+          </li>
+          {% endif %}
+          {% if perms.okta.list_users %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Users
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="{% url 'okta:user-list' %}">All Users</a>
             </div>
           </li>
           {% endif %}
@@ -95,8 +107,12 @@
         </div>
         {% if request.user.is_authenticated %}
           <div class="my-2 my-lg-0">
+            {% if request.user.first_name and request.user.last_name %}
+            <span class="pr-1">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+            {% else %}
             <span class="pr-1">{{ request.user }}</span>
-            <a class="btn btn-outline-danger my-2 my-sm-0" href="#">Logout</a>
+            {% endif %}
+            <a class="btn btn-outline-danger my-2 my-sm-0" href="/accounts/logout">Logout</a>
           </div>
         {% else %}
           <div class="my-2 my-lg-0">
@@ -106,7 +122,7 @@
       </div>
     </nav>
 
-    <div class="container-fullwidth">
+    <div class="container-fluid">
         <div id="messages">
             {% if messages %}
               {% for message in messages %}
@@ -156,6 +172,13 @@
 
     <!-- ListJS -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+
+    <script type="text/javascript">
+      // Enable all Tooltips
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
+    </script>
 
     {% block script-footer %}{% endblock %}
 </body>

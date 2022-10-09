@@ -1,0 +1,306 @@
+{% extends "core/base.html" %}
+{% load hijack %}
+
+{% block title %}User - {{ okta_user.email }}{% endblock %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block css %}
+<style>
+{% comment %} .okta-groups > li > .description {
+    font-size: 14px;
+} {% endcomment %}
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="content">
+
+	<div class="row">
+        <div class="col-sm-12">
+            <div class="d-flex flex-row bd-highlight mb-3">
+                <div class="bd-highlight">
+                    <img style="max-height: 150px;" src="{{ okta_user.profile.photoUrl }}">
+                </div>
+                <div class="pl-4 bd-highlight">
+                    <h1 class="display-4">{{ okta_user.firstName }} {{ okta_user.lastName }}</h1>
+                    <h4>{{ okta_user.title }}</h4>
+                    <h5>{{ okta_user.email }}</h5>
+                </div>
+            </div>
+            
+        </div>
+        <div class="col-sm-12">
+            {% if request.user.is_superuser %}
+            <div class="dropdown">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Admin</a>
+            
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    {% if user_item %}
+                        {% if request.user|can_hijack:user_item %}
+                            <form action="{% url 'hijack:acquire' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_pk" value="{{ user_item.pk }}">
+                                <button class="dropdown-item" type="submit">Hijack</button>
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <a class="dropdown-item disabled" href="#">Hijack (no Auth.User)</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+		<div class="col-sm-12 col-md-6 col-xl-4">
+            <h4>Profile</h4>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td class="w-25">First Name</td>
+                        {% if okta_user.profile.firstName %}
+                            <td>{{ okta_user.profile.firstName }}</td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="w-25">Last Name</td>
+                        {% if okta_user.profile.lastName %}
+                            <td>{{ okta_user.profile.lastName }}</td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="w-25">Display Name</td>
+                        {% if okta_user.profile.displayName %}
+                            <td>{{ okta_user.profile.displayName }}</td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+
+                    <tr>
+                        <td class="w-25">Email Aliases</td>
+                        {% if okta_user.profile.emailAliases %}
+                        <td>
+                            <ul class="list-unstyled">
+                            {% for i in okta_user.profile.emailAliases %}
+                                <li>{{ i }}</li>
+                            {% endfor %}
+                            </ul>
+                        </td>
+                        {% else %}
+                        <td></td>
+                        {% endif %}
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Job</h4>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td class="w-25">Title</td>
+                        {% if okta_user.profile.title %}
+                            <td>{{ okta_user.profile.title }}</td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="w-25">Department</td>
+                        {% if okta_user.profile.department %}
+                            <td>{{ okta_user.profile.department }}</td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="w-25">Division</td>
+                        {% if okta_user.profile.division %}
+                            <td>{{ okta_user.profile.division }}</td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="w-25">Manager Level</td>
+                        {% if okta_user.profile.managerLevel %}
+                            <td>{{ okta_user.profile.managerLevel }}</td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="w-25">Manager Email</td>
+                        {% if okta_user.profile.managerEmail %}
+                            <td>{{ okta_user.profile.managerEmail }}</td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="w-25">VIP</td>
+                        {% if okta_user.profile.vip %}
+                            <td>{{ okta_user.profile.vip }}</td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+                    
+
+                    
+                </tbody>
+            </table>
+
+            <h4>Location</h4>
+            <table class="table">
+                <tr>
+                    <td class="w-25">Street Address</td>
+                    {% if okta_user.profile.streetAddress %}
+                        <td>{{ okta_user.profile.streetAddress }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td class="w-25">City</td>
+                    {% if okta_user.profile.city %}
+                        <td>{{ okta_user.profile.city }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td class="w-25">State</td>
+                    {% if okta_user.profile.state %}
+                        <td>{{ okta_user.profile.state }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td class="w-25">Zip Code</td>
+                    {% if okta_user.profile.zipCode %}
+                        <td>{{ okta_user.profile.zipCode }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td class="w-25">Country</td>
+                    {% if okta_user.profile.country %}
+                        <td>{{ okta_user.profile.country }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                </tr>
+            </table>
+
+            <h4>Other</h4>
+            <table class="table">
+                <tr>
+                    <td class="w-25">Equipment Refresh Date</td>
+                    {% if okta_user.profile.equipment_refresh_date %}
+                        <td>{{ okta_user.profile.equipment_refresh_date }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td class="w-25">AD Object GUID</td>
+                    {% if okta_user.profile.objectGUID %}
+                        <td>{{ okta_user.profile.objectGUID }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td class="w-25">AzureAD Mapping</td>
+                    {% if okta_user.profile.aadmapping %}
+                        <td>{{ okta_user.profile.aadmapping }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                </tr>
+                
+
+            </table>
+
+            <p style="margin-bottom:40px;">-- All the Attributes --</p>
+            <table class="table">
+            {% for k,v in okta_user.profile.items %}
+                <tr>
+                    <td class="w-25">{{ k }}</td>
+                    <td>{{ v }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+		</div>
+        <div class="col-sm-12 col-md-6 col-xl-8">
+            <h4>Groups ({{ group_membership|length }})</h4>
+            <div class="card-group" id="group-types" style="margin-bottom: 10px;">
+                {% for group_type in group_membership_types %}
+                    <div class="card text-center" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ group_type.profile__type|capfirst }}</h5>
+                            <p class="card-text">{{ group_type.count }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <table id="group_table" class="table">
+				<thead>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Type</th>
+				</thead>
+				<tbody>
+				{% for g in group_membership %}
+					<tr>
+						<td><a href="{% url "okta:group-view" group_id=g.id %}">{{ g.name }}</a></td>
+						<td>{{ g.description }}</td>
+						<td>{{ g.profile.type }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+            <div id="your-groups">
+				<!-- class="search" automagically makes an input a search field. -->
+				<input class="search" placeholder="Search" />
+				<!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
+				<button class="sort" data-sort="name">Sort by Name</button>
+				<button class="sort" data-sort="email">Sort by Email</button>
+
+				<ul class="list list-unstyled okta-groups mt-3">
+					{% for g in group_membership %}
+					<li>
+						<div>
+                            <span class="name"><a href="{% url "okta:group-view" group_id=g.id %}">{{ g.name }}</a></span> 
+                            <span class="email">{% if g.profile.emailAddress %}{{ g.profile.emailAddress }}{% endif %}</span>
+                        </div>
+						<p class="description">{{ g.description }}</p>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+        </div>
+	</div>
+
+</main>
+{% endblock %}
+
+{% block script-footer %}
+<script>
+	var options = {
+		valueNames: [ 'name', 'description', 'email' ]
+	};
+
+	var availableGroupsList = new List('your-groups', options);
+</script>
+{% endblock %}

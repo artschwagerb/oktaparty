@@ -1,0 +1,294 @@
+{% extends "core/base.html" %}
+
+{% block title %}Group List{% endblock %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block css %}
+<style type="text/css">
+	.card-number {
+		font-size: 30px;
+	}
+
+	.okta-groups {
+		margin-top: 20px;
+	}
+
+	.okta-groups > li > .name {
+		font-size: 20px;
+	}
+
+	.okta-groups > li {
+		/* other properties */
+		margin-top: 10px;
+		margin-bottom: 10px;
+		border-top: 1px solid rgba(0,0,0,.125);
+		padding-top: 10px;
+	 }
+	 
+	 .okta-groups > li:first-child {
+		{% comment %} margin-top: 0; {% endcomment %}
+		border-top: none;
+		{% comment %} padding-top: 0; {% endcomment %}
+	 }
+</style>
+
+<style type="text/css">
+	{% comment %} body{
+		background: #f6f9fc;
+		margin-top:20px;} {% endcomment %}
+	/* booking */
+	
+	.bg-light-blue {
+		background-color: #e9f7fe !important;
+		color: #3184ae;
+		padding: 7px 18px;
+		border-radius: 4px;
+	}
+	
+	.bg-light-green {
+		background-color: rgba(40, 167, 69, 0.2) !important;
+		padding: 7px 18px;
+		border-radius: 4px;
+		color: #28a745 !important;
+	}
+	
+	.buttons-to-right {
+		position: absolute;
+		right: 0;
+		top: 40%;
+	}
+	
+	.btn-gray {
+		color: #666;
+		background-color: #eee;
+		padding: 7px 18px;
+		border-radius: 4px;
+	}
+	
+	.booking:hover .buttons-to-right .btn-gray {
+		opacity: 1;
+		transition: .3s;
+	}
+	
+	.buttons-to-right .btn-gray {
+		opacity: 0;
+		transition: .3s;
+	}
+	
+	.btn-gray:hover {
+		background-color: #36a3f5;
+		color: #fff;
+	}
+	
+	.booking {
+		margin-bottom: 30px;
+		border-bottom: 1px solid #eee;
+		padding-bottom: 30px;
+	}
+	
+	.booking:last-child {
+		margin-bottom: 0px;
+		border-bottom: none;
+		padding-bottom: 0px;
+	}
+	
+	@media screen and (max-width: 575px) {
+		.buttons-to-right {
+			top: 10%;
+		}
+		.buttons-to-right a {
+			display: block;
+			margin-bottom: 20px;
+		}
+		.buttons-to-right a:last-child {
+			margin-bottom: 0px;
+		}
+		.bg-light-blue,
+		.bg-light-green,
+		.btn-gray {
+			padding: 7px;
+		}
+	}
+	
+	.card {
+		margin-bottom: 20px;
+		background-color: #fff;
+		border-radius: 4px;
+		-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+		border-radius: 4px;
+		box-shadow: none;
+		border: none;
+		padding: 25px;
+	}
+	.mb-5, .my-5 {
+		margin-bottom: 3rem!important;
+	}
+	.msg-img {
+		margin-right: 20px;
+	}
+	.msg-img img {
+		width: 60px;
+		border-radius: 50%;
+	}
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="content">
+
+	<div class="row" style="margin-bottom: 20px;">
+		<div class="col-sm-12">
+			<h2>Okta Groups - Owner</h2>
+			<p>You are listed as the owner of the following Okta Groups.</p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-6">
+			<div class="card card-white mb-5">
+				<div class="card-heading clearfix border-bottom mb-4">
+					<h4 class="card-title">Role Groups ({{ group_role_list|length }})</h4>
+				</div>
+				<div class="card-body">
+					<ul class="list-unstyled">
+						{% for g in group_role_list %}
+						<li class="position-relative booking">
+							<div class="media">
+								<div class="media-body">
+									<h5 class="mb-4"><a href="{% url "okta:group-view" group_id=g.id %}">{{ g.name }}</a> <span class="badge badge-primary mx-3">{{ g.profile.type|capfirst }}</span></h5>
+									<div class="mb-3">
+										<span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">{{ g.description }}</span>
+									</div>
+									{% if g.profile.environment %}
+									<div class="mb-3">
+										<span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">Environment:</span>
+										<span class="bg-light-blue">{{ g.profile.environment }}</span>
+									</div>
+									{% endif %}
+									{% if g.profile.application %}
+									<div class="mb-3">
+										<span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">Application:</span>
+										<span class="bg-light-blue">{{ g.profile.application }}</span>
+									</div>
+									{% endif %}
+									{% if g.profile.emailAddress %}
+									<div class="mb-3">
+										<span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">Email Address:</span>
+										<span class="bg-light-blue">{{ g.profile.emailAddress }}</span>
+									</div>
+									{% endif %}
+									{% if g.member_count %}
+									<div class="mb-3">
+										<span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">Members:</span>
+										<span class="bg-light-blue">{{ g.member_count }}</span>
+									</div>
+									{% endif %}
+									{% if g.profile.owners %}
+									<div class="mb-3">
+										<span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">Owners:</span>
+										<span class="bg-light-blue">
+										{% for i in g.profile.owners %}
+											{% if forloop.last %}
+											<span>{{ i }}</span>
+											{% else %}
+											<span class="border-right pr-2 mr-2">{{ i }}</span>
+											{% endif %}
+										{% endfor %}
+										</span>
+									</div>
+									{% endif %}
+									<a style="display: none;" href="{% url "okta:group-view" group_id=g.id %}" class="btn btn-secondary btn-sm">View Group</a>
+								</div>
+							</div>
+						</li>
+						{% endfor %}
+					</ul>
+	
+				</div>
+			</div>
+	
+		</div>
+		<div class="col-md-6">
+			<div class="card card-white mb-5">
+				<div class="card-heading clearfix border-bottom mb-4">
+					<h4 class="card-title">Distribution and Security Groups ({{ group_other_list|length }})</h4>
+				</div>
+				<div class="card-body">
+					<ul class="list-unstyled">
+						{% for g in group_other_list %}
+						<li class="position-relative booking">
+							<div class="media">
+								<div class="media-body">
+									<h5 class="mb-4"><a href="{% url "okta:group-view" group_id=g.id %}">{{ g.name }}</a> <span class="badge badge-primary mx-3">{{ g.profile.type|capfirst }}</span></h5>
+									<div class="mb-3">
+										<span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">{{ g.description }}</span>
+									</div>
+									{% if g.profile.environment %}
+									<div class="mb-3">
+										<span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">Environment:</span>
+										<span class="bg-light-blue">{{ g.profile.environment }}</span>
+									</div>
+									{% endif %}
+									{% if g.profile.application %}
+									<div class="mb-3">
+										<span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">Application:</span>
+										<span class="bg-light-blue">{{ g.profile.application }}</span>
+									</div>
+									{% endif %}
+									{% if g.profile.emailAddress %}
+									<div class="mb-3">
+										<span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">Email Address:</span>
+										<span class="bg-light-blue">{{ g.profile.emailAddress }}</span>
+									</div>
+									{% endif %}
+									{% if g.member_count %}
+									<div class="mb-3">
+										<span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">Members:</span>
+										<span class="bg-light-blue">{{ g.member_count }}</span>
+									</div>
+									{% endif %}
+									{% if g.profile.owners %}
+									<div class="mb-3">
+										<span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">Owners:</span>
+										<span class="bg-light-blue">
+										{% for i in g.profile.owners %}
+											{% if forloop.last %}
+											<span>{{ i }}</span>
+											{% else %}
+											<span class="border-right pr-2 mr-2">{{ i }}</span>
+											{% endif %}
+										{% endfor %}
+										</span>
+									</div>
+									{% endif %}
+									<a style="display: none;" href="{% url "okta:group-view" group_id=g.id %}" class="btn btn-secondary btn-sm">View Group</a>
+								</div>
+							</div>
+						</li>
+						{% endfor %}
+					</ul>
+	
+				</div>
+			</div>
+	
+		</div>
+	</div>
+</main>
+{% endblock %}
+
+{% block script-footer %}
+{% comment %} <script>
+	var options = {
+		valueNames: [ 'name', 'description', 'email' ]
+	};
+	  
+	var availableGroupsList = new List('available-groups', options);
+	var availableGroupsList = new List('your-groups', options);
+</script> {% endcomment %}
+{% endblock %}

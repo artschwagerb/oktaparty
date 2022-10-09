@@ -5,7 +5,7 @@ from .okta import OktaTools
 
 # Create your models here.
 class OktaGroup(models.Model):
-    """A typical class defining a model, derived from the Model class."""
+    """Okta Group"""
 
     # Fields
     name = models.CharField(max_length=255, help_text='Enter a name')
@@ -27,7 +27,8 @@ class OktaGroup(models.Model):
     hidden = models.BooleanField(default=False)
 
     active = models.BooleanField(default=True)
-
+    lastUpdated = models.DateTimeField(null=True, blank=True)
+    lastMembershipUpdated = models.DateTimeField(null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     
@@ -35,10 +36,11 @@ class OktaGroup(models.Model):
     class Meta: 
         ordering = ['name']
         permissions = (
+            ("list_groups", "Can List Groups"),
         )
     
     def __str__(self):
-        """String for representing the MyModelName object (in Admin site etc.)."""
+        """String for representing the OktaGroup object (in Admin site etc.)."""
         return "%s (Okta ID: %s)" % (self.name, self.okta_id)
     
     def source_system_pretty(self):
@@ -65,6 +67,43 @@ class OktaGroup(models.Model):
         self.member_count = len(okta_users)
         self.save()
 
-        user_list = User.objects.filter(okta_id__in=okta_user_ids)
+        user_list = OktaUser.objects.filter(okta_id__in=okta_user_ids)
 
         return user_list
+
+class OktaUser(models.Model):
+    """Okta User"""
+
+    # Fields
+    okta_id = models.CharField(max_length=100, null=True, blank=True)
+
+    firstName = models.CharField(max_length=255, null=True, blank=True)
+    lastName = models.CharField(max_length=255, null=True, blank=True)
+    email = models.CharField(max_length=255, null=True, blank=True)
+    login = models.CharField(max_length=255, null=True, blank=True)
+    title = models.CharField(max_length=255, null=True, blank=True)
+    secondEmail = models.CharField(max_length=255, null=True, blank=True)
+
+    profile = models.JSONField()
+    
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    
+    # Metadata
+    class Meta: 
+        ordering = ['email']
+        permissions = (
+            ("list_users", "Can List Users"),
+        )
+    
+    def __str__(self):
+        """String for representing the OktaUser object (in Admin site etc.)."""
+        return "%s (Okta ID: %s)" % (self.email, self.okta_id)
+    
+    def groups(self):
+        okta = OktaTools()
+        user_groups = okta.user_groups(self.okta_id)
+        user_group_ids = [g['id'] for g in user_groups]
+        user_group_list = OktaGroup.objects.filter(okta_id__in=user_group_ids)
+
+        return user_group_list

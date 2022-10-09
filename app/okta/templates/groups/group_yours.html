@@ -57,7 +57,7 @@
 				<ul class="list list-unstyled okta-groups">
 					{% for g in group_list %}
 					<li>
-						<h4 class="name">{{ g.name }}</h4>
+						<h4 class="name"><a href="{% url "okta:group-view" group_id=g.id %}">{{ g.name }}</a></h4>
 						<p class="description">{{ g.description }}</p>
 						<p class="email">{% if g.profile.emailAddress %}{{ g.profile.emailAddress }}{% endif %}</p>
 						<p>
@@ -84,7 +84,7 @@
 				<ul class="list list-unstyled okta-groups">
 					{% for g in user_group_list %}
 					<li>
-						<h4 class="name">{{ g.name }}</h4>
+						<h4 class="name"><a href="{% url "okta:group-view" group_id=g.id %}">{{ g.name }}</a></h4>
 						<p class="description">{{ g.description }}</p>
 						<p class="email">{% if g.profile.emailAddress %}{{ g.profile.emailAddress }}{% endif %}</p>
 						<p>
@@ -92,7 +92,7 @@
 								{% if g.allow_leave %}
 									<a href="{% url 'okta:group-leave' group_id=g.id %}?next={% url 'okta:group-yours' %}" class="btn btn-outline-danger btn-sm"><i class="far fa-times-circle"></i> Leave</a>
 								{% else %}
-									<p><small>* Required</small></p>
+									<p class="text-danger"><small>* Required</small></p>
 								{% endif %}
 							{% else %}
 								<p><small>External Group</small></p>

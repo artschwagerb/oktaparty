@@ -1,0 +1,56 @@
+{% extends "core/base.html" %}
+
+{% block title %}User List{% endblock %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block css %}{% endblock %}
+
+{% block content %}
+<main class="content">
+
+	<div class="row" style="margin-bottom: 20px;">
+		<div class="col-sm-12">
+			<h2>Okta Users ({{ user_list|length }})</h2>
+			<a class="btn btn-outline-primary btn-sm" href="{% url "okta:task-okta-user-sync" %}">Sync Users</a>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12 col-md-12">
+
+			<table id="user_table" class="table">
+				<thead>
+					<th>Email</th>
+					<th>First</th>
+					<th>Last</th>
+					<th>Title</th>
+					<th>Department</th>
+					<th>Division</th>
+				</thead>
+				<tbody>
+				{% for u in user_list %}
+					<tr>
+						<td><a href="{% url "okta:user-view" user_id=u.id %}">{{ u.email }}</a></td>
+						<td>{{ u.firstName }}</td>
+						<td>{{ u.lastName }}</td>
+						<td>{{ u.title }}</td>
+						<td>{{ u.profile.department }}</td>
+						<td>{{ u.profile.division }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</main>
+{% endblock %}
+
+{% block script-footer %}
+<script>
+	$(document).ready( function () {
+		$('#user_table').DataTable();
+	} );
+</script>
+{% endblock %}

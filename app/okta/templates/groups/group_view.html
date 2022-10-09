@@ -1,0 +1,140 @@
+{% extends "core/base.html" %}
+
+{% block title %}Group View{% endblock %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block css %}
+<style type="text/css">
+    .member-row {
+        display: flex;
+        width: 300px;
+        margin: 5px;
+        padding: 10px;
+        border: 1px solid #F5F5F5;
+    }
+
+    .member-row > column {
+        /* flex: 33.33%; */
+        padding: 5px;
+    }
+
+    .member-row .member-photo {
+        max-width: 50px;
+        /* border: 2px solid #555; */
+        margin-right: 20px;
+    }
+
+    .member-row .name {
+        font-size: 14px;
+    }
+
+    .member-row .title {
+        font-size: 14px;
+    }
+
+    .member-row .email {
+        font-size: 14px;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="content">
+
+	<div class="row">
+        <div class="col-sm-12">
+            <div class="d-flex flex-row bd-highlight mb-3">
+                <div class="bd-highlight">
+                    <h1 class="display-4">{{ okta_group.name }}</h1>
+                    <h5>{{ okta_group.description }}</h5>
+                </div>
+            </div>
+        </div>
+		<div class="col-sm-12 col-md-6">
+            <table class="table">
+                <tr>
+                    <td>Type</td>
+                    {% if okta_group.profile.type %}
+                        <td>{{ okta_group.profile.type }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td>Environment</td>
+                    {% if okta_group.profile.environment %}
+                        <td>{{ okta_group.profile.environment }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td>Owners</td>
+                    {% if okta_group.profile.owners %}
+                    <td>
+                        <ul class="list-unstyled">
+                        {% for i in okta_group.profile.owners %}
+                            <li>{{ i }}</li>
+                        {% endfor %}
+                        </ul>
+                    </td>
+                    {% else %}
+                    <td>None (<a href="#">Claim Ownership</a>)</td>
+                    {% endif %}
+                </tr>
+                {% if okta_group.source_system %}
+                <tr>
+                    <td>Source System</td>
+                    {% if okta_group.source_system %}
+                        <td>{{ okta_group.source_system }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                </tr>
+                {% endif %}
+            </table>
+		</div>
+        <div class="col-sm-12 col-md-6">
+            <div class="mb-3">
+                <a class="btn btn-primary" href="{% url "okta:group-edit" group_id=okta_group.id %}">Edit</a>
+                <a class="btn btn-primary" target="_blank" href="https://stackoverflow-admin.okta.com/admin/group/{{ okta_group.okta_id }}">Okta Admin Dashboard</a>
+            </div>
+            <h5>Members: {{ group_members|length }}</h5>
+
+            <div id="member-list">
+                <label for="search">Filter:</label>
+                <input class="search" />
+                <ul style="margin-top: 10px;" class="list d-flex flex-wrap">
+                {% for u in group_members %}
+                    <li class="member-row">
+                        <div class="column">
+                            <img class="member-photo" src="{{ u.profile.photoUrl }}">
+                        </div>
+                        <div class="column">
+                            <div class="name"><a href="{% url "okta:user-view" user_id=u.id %}">{{ u.firstName }} {{ u.lastName }}</a></div>
+                            <div class="title">{{ u.profile.title }}</div>
+                            <div class="email">{{ u.email }}</div>
+                        </div>
+                    </li>
+                {% empty %}
+                    <p>none</p>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+	</div>
+
+</main>
+{% endblock %}
+
+{% block script-footer %}
+<script>
+	var options = {
+		valueNames: [ 'name', 'title', 'email' ]
+	};
+
+	var memberList = new List('member-list', options);
+</script>
+{% endblock %}

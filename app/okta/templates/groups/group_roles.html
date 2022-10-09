@@ -48,19 +48,8 @@
 
 	<div class="row" style="margin-bottom: 20px;">
 		<div class="col-sm-12">
-			<h2>Okta Groups ({{ group_list|length }})</h2>
+			<h2>Okta Groups - Roles ({{ group_role_list|length }})</h2>
 			<a class="btn btn-outline-primary btn-sm" href="{% url "okta:task-okta-group-sync" %}">Sync Groups</a>
-		</div>
-	</div>
-
-	<div class="row" style="margin-bottom: 20px;">
-		<div class="col-sm-12 col-md-12">
-			<h3>Applications</h3>
-			<div class="d-flex flex-wrap justify-content-start">
-				{% for app in app_list %}
-				<div class="p-1"><a class="btn btn-secondary" href="?app={{ app }}"><strong>{{ app }}</strong></a></div>
-				{% endfor %}
-			</div>
 		</div>
 	</div>
 
@@ -77,7 +66,7 @@
 					<th>Members</th>
 				</thead>
 				<tbody>
-				{% for g in group_list %}
+				{% for g in group_role_list %}
 					<tr>
 						<td><a href="{% url "okta:group-view" group_id=g.id %}">{{ g.name }}</a></td>
 						<td>{{ g.description }}</td>
@@ -98,7 +87,12 @@
 {% block script-footer %}
 <script>
 	$(document).ready( function () {
-		$('#group_table').DataTable();
+		$('#group_table').DataTable({
+			lengthMenu: [
+				[20, 50, -1],
+				[20, 50, 'All'],
+			],
+		});
 	} );
 </script>
 {% endblock %}
